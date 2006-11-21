@@ -72,10 +72,11 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_LIBTOOL
 if test -n "$GCC"; then
-  CFLAGS="$CFLAGS -ansi -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wwrite-strings -Wno-variadic-macros"
+  CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Wmissing-prototypes -Wwrite-strings"
 fi
 AC_CHECK_PROGS(GCOV, gcov, false)
 AC_CHECK_PROGS(LCOV, lcov, false)
+AC_CHECK_PROGS(GENHTML, genhtml, false)
 
 # Checks for libraries.
 
