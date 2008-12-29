@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,7 +26,6 @@ static char signal_11_str[SIG_STR_LEN];
 static char signal_11_8_str[SIG_STR_LEN];
 static char signal_8_str[SIG_STR_LEN];
 
-/* FIXME: all these line numbers are kind of hard to maintain */
 static master_test_t master_tests[] = {
   { "Simple Tests",  18, CK_FAILURE, "Failure expected" },
   { "Simple Tests",  24, CK_ERROR,   "Early exit with return value 1" },

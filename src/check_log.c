@@ -173,7 +173,7 @@ void stdout_lfun (SRunner *sr, FILE *file, enum print_output printmode,
   
 }
 
-void lfile_lfun (SRunner *sr, FILE *file, enum print_output printmode CK_ATTRIBUTE_UNUSED,
+void lfile_lfun (SRunner *sr, FILE *file, enum print_output printmode,
 		 void *obj, enum cl_event evt)
 {
   TestResult *tr;
@@ -208,7 +208,7 @@ void lfile_lfun (SRunner *sr, FILE *file, enum print_output printmode CK_ATTRIBU
   
 }
 
-void xml_lfun (SRunner *sr CK_ATTRIBUTE_UNUSED, FILE *file, enum print_output printmode CK_ATTRIBUTE_UNUSED,
+void xml_lfun (SRunner *sr, FILE *file, enum print_output printmode,
 		  void *obj, enum cl_event evt)
 {
   TestResult *tr;

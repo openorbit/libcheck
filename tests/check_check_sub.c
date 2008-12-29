@@ -1,14 +1,14 @@
-#include "config.h"
-#include "../lib/libcompat.h"
-#include <sys/types.h>
-#if HAVE_SYS_WAIT_H
-#include <sys/wait.h>
-#endif /* HAVE_SYS_WAIT_H */
-#include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <check.h>
 #include "check_check.h"
+
+
+
+
 
 
 
@@ -60,8 +60,8 @@ END_TEST
 
 #if defined(__GNUC__)
 START_TEST(test_fail_no_msg)
-{ /* taking out the NULL provokes an ISO C99 warning in GCC */
-  fail_unless(4 == 5, NULL);
+{
+  fail_unless(4 == 5);
 }
 END_TEST
 #endif /* __GNUC__ */
@@ -73,8 +73,8 @@ END_TEST
 
 #if defined(__GNUC__)
 START_TEST(test_fail_if_no_msg)
-{ /* taking out the NULL provokes an ISO C99 warning in GCC */
-  fail_if(4 != 5, NULL);
+{
+  fail_if(4 != 5);
 }
 END_TEST
 #endif /* __GNUC__ */
@@ -104,11 +104,11 @@ END_TEST
 #if defined(__GNUC__)
 START_TEST(test_fail_empty)
 { /* plain fail() doesn't compile with xlc in C mode because of `, ## __VA_ARGS__' problem */
-  /* on the other hand, taking out the NULL provokes an ISO C99 warning in GCC */
-  fail(NULL);
+  fail();
 }
 END_TEST
 #endif /* __GNUC__ */
+/* FIXME: all these line numbers are kind of hard to maintain */
 START_TEST(test_ck_abort)
 {
   ck_abort(); /* line 114 */
@@ -313,43 +313,35 @@ END_TEST
 
 START_TEST(test_fork1p_pass)
 {
-#ifdef _POSIX_VERSION
-  pid_t pid;
-
-  if((pid = fork()) < 0) {
-    fail("Failed to fork new process");
-  } else if (pid > 0) {
-#endif /* _POSIX_VERSION */
-    fail_unless(1, NULL);
-#ifdef _POSIX_VERSION
-    kill(pid, SIGKILL);
-  } else {
-    for (;;) {
-      sleep(1);
-    }
-  }
-#endif /* _POSIX_VERSION */
-}
-END_TEST
-
-START_TEST(test_fork1p_fail)
-{
-#ifdef _POSIX_VERSION
   pid_t pid;
   
   if((pid = fork()) < 0) {
     fail("Failed to fork new process");
   } else if (pid > 0) {
-#endif /* _POSIX_VERSION */
-    fail("Expected fail");
-#ifdef _POSIX_VERSION
+    fail_unless(1, NULL);
     kill(pid, SIGKILL);
   } else {
     for (;;) {
       sleep(1);
     }
   }
-#endif /* _POSIX_VERSION */
+}
+END_TEST
+
+START_TEST(test_fork1p_fail)
+{
+  pid_t pid;
+  
+  if((pid = fork()) < 0) {
+    fail("Failed to fork new process");
+  } else if (pid > 0) {
+    fail("Expected fail");
+    kill(pid, SIGKILL);
+  } else {
+    for (;;) {
+      sleep(1);
+    }
+  }
 }
 END_TEST
 

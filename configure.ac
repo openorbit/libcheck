@@ -11,14 +11,8 @@ AC_CONFIG_SRCDIR([src/check.c])
 # place where extra autoconf macros are kept
 AC_CONFIG_MACRO_DIR([m4])
 
-# place where portability library functions are kept
-AC_CONFIG_LIBOBJ_DIR([lib])
-
 # place to put some extra build scripts installed
 AC_CONFIG_AUX_DIR([build-aux])
-
-# define things like _GNU_SOURCE appropriately
-AC_USE_SYSTEM_EXTENSIONS
 
 # really severe build strictness
 AM_INIT_AUTOMAKE([-Wall -Werror gnits 1.9.6])
@@ -85,7 +79,7 @@ AC_PROG_LIBTOOL
 
 # add these options to CFLAGS if the compiler supports them
 AC_DEFUN([AX_CFLAGS_ADD],[AX_C_CHECK_FLAG($1, , , CFLAGS="$CFLAGS $1")])
-AX_CFLAGS_WARN_ALL_ANSI
+AX_CFLAGS_ADD([-Wall])
 AX_CFLAGS_ADD([-Wextra])
 AX_CFLAGS_ADD([-Wstrict-prototypes])
 AX_CFLAGS_ADD([-Wmissing-prototypes])
@@ -120,8 +114,8 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([alarm gettimeofday localtime_r memmove memset putenv setenv strerror strrchr strstr])
-AC_REPLACE_FUNCS([sleep strdup strsignal])
+AC_CHECK_FUNCS([alarm gettimeofday localtime_r memmove memset putenv setenv strdup strerror strrchr strstr])
+AC_REPLACE_FUNCS([strsignal])
 
 # Output files
 AC_CONFIG_HEADERS([config.h])
@@ -129,7 +123,6 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([check.pc
                  Makefile
 		 doc/Makefile
-		 lib/Makefile
                  src/check.h
                  src/Makefile
                  tests/Makefile])
