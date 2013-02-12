@@ -11,12 +11,12 @@ SRunner *sr;
 
 START_TEST(test_nofork_exit)
 {
-  char* s = NULL;
+  char* null = NULL;
 
-  ck_assert(NULL != s);
+  ck_assert(NULL != null);
 
   /* this test should not crash in nofork mode */
-  ck_assert_str_eq("test", s);
+  ck_assert_str_eq("test", null);
 }
 END_TEST
 

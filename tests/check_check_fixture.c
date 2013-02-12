@@ -9,8 +9,6 @@
 #include "check_str.h"
 #include "check_check.h"
 
-static char errm[200];
-
 static void fixture_sub_setup (void)
 {
   ck_abort_msg("Test failure in fixture");
@@ -70,6 +68,7 @@ START_TEST(test_setup_failure_msg)
   free(tra);
 
   if (strstr(trm, trmexp) == 0) {
+    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad setup tr msg (%s)", trm);
     
@@ -191,6 +190,7 @@ START_TEST(test_ch_setup_fail)
   if (strstr(trm,
 	     "check_check_fixture.c:129:S:Setup Fail:test_sub_fail:0: Failed setup")
       == 0) {
+    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad failed checked setup tr msg (%s)", trm);
     
@@ -307,6 +307,7 @@ START_TEST(test_ch_setup_sig)
 	     "check_check_fixture.c:139:S:Setup Sig:test_sub_fail:0: "
 	     "(after this point) Received signal 8")
       == 0) {
+    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Msg was (%s)", trm);
     
@@ -390,6 +391,7 @@ START_TEST(test_ch_teardown_fail)
   if (strstr(trm,
 	     "check_check_fixture.c:134:S:Teardown Fail:test_sub_pass:0: Failed teardown")
       == 0) {
+    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad failed checked teardown tr msg (%s)", trm);
     
@@ -433,6 +435,7 @@ START_TEST(test_ch_teardown_sig)
 	     "check_check_fixture.c:145:S:Teardown Sig:test_sub_pass:0: "
 	     "(after this point) Received signal 8")
       == 0) {
+    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad msg (%s)", trm);
     

@@ -40,7 +40,7 @@ void xml_lfun (SRunner *sr, FILE *file, enum print_output,
 void subunit_lfun (SRunner *sr, FILE *file, enum print_output,
 		  void *obj, enum cl_event evt);
 
-void srunner_register_lfun (SRunner *sr, FILE *lfile, int close,
+void srunner_register_lfun (SRunner *sr, FILE *lfile, int do_close,
 			    LFun lfun, enum print_output);
 
 FILE *srunner_open_lfile (SRunner *sr);

@@ -507,14 +507,14 @@ static void set_fork_info (TestResult *tr, int status, int signal_expected, sign
   }
 }
 
-static char *signal_msg (int signal)
+static char *signal_msg (int signal_num)
 {
   char *msg = emalloc(MSG_LEN); /* free'd by caller */
   if (alarm_received) {
     snprintf(msg, MSG_LEN, "Test timeout expired");
   } else {
     snprintf(msg, MSG_LEN, "Received signal %d (%s)",
-             signal, strsignal(signal));
+             signal_num, strsignal(signal_num));
   }
   return msg;
 }

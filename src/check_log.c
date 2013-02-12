@@ -81,7 +81,7 @@ const char *srunner_xml_fname (SRunner *sr)
   return getenv("CK_XML_LOG_FILE_NAME");
 }
 
-void srunner_register_lfun (SRunner *sr, FILE *lfile, int close,
+void srunner_register_lfun (SRunner *sr, FILE *lfile, int do_close,
 			    LFun lfun, enum print_output printmode)
 {
   Log *l = emalloc (sizeof(Log));
@@ -92,7 +92,7 @@ void srunner_register_lfun (SRunner *sr, FILE *lfile, int close,
 
   l->lfile = lfile;
   l->lfun = lfun;
-  l->close = close;
+  l->close = do_close;
   l->mode = printmode;
   check_list_add_end (sr->loglst, l);
   return;
@@ -323,22 +323,22 @@ void subunit_lfun (SRunner *sr, FILE *file, enum print_output printmode,
   case CLEND_T:
     tr = obj;
     {
-      char *name = ck_strdup_printf ("%s:%s", tr->tcname, tr->tname);
+      char *print_name = ck_strdup_printf ("%s:%s", tr->tcname, tr->tname);
       char *msg = tr_short_str (tr);
       switch (tr->rtype) {
       case CK_PASS:
-        subunit_test_pass(name);
+        subunit_test_pass(print_name);
         break;
       case CK_FAILURE:
-        subunit_test_fail(name, msg);
+        subunit_test_fail(print_name, msg);
         break;
       case CK_ERROR:
-        subunit_test_error(name, msg);
+        subunit_test_error(print_name, msg);
         break;
       case CK_TEST_RESULT_INVALID:
       default:
         eprintf("Bad result type in subunit_lfun", __FILE__, __LINE__);
-        free(name);
+        free(print_name);
         free(msg);
       }
     }
