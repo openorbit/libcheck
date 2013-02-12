@@ -9,6 +9,8 @@
 #include "check_str.h"
 #include "check_check.h"
 
+static char errm[200];
+
 static void fixture_sub_setup (void)
 {
   ck_abort_msg("Test failure in fixture");
@@ -68,7 +70,6 @@ START_TEST(test_setup_failure_msg)
   free(tra);
 
   if (strstr(trm, trmexp) == 0) {
-    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad setup tr msg (%s)", trm);
     
@@ -190,7 +191,6 @@ START_TEST(test_ch_setup_fail)
   if (strstr(trm,
 	     "check_check_fixture.c:129:S:Setup Fail:test_sub_fail:0: Failed setup")
       == 0) {
-    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad failed checked setup tr msg (%s)", trm);
     
@@ -307,7 +307,6 @@ START_TEST(test_ch_setup_sig)
 	     "check_check_fixture.c:139:S:Setup Sig:test_sub_fail:0: "
 	     "(after this point) Received signal 8")
       == 0) {
-    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Msg was (%s)", trm);
     
@@ -391,7 +390,6 @@ START_TEST(test_ch_teardown_fail)
   if (strstr(trm,
 	     "check_check_fixture.c:134:S:Teardown Fail:test_sub_pass:0: Failed teardown")
       == 0) {
-    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad failed checked teardown tr msg (%s)", trm);
     
@@ -435,7 +433,6 @@ START_TEST(test_ch_teardown_sig)
 	     "check_check_fixture.c:145:S:Teardown Sig:test_sub_pass:0: "
 	     "(after this point) Received signal 8")
       == 0) {
-    char errm[200];
     snprintf(errm, sizeof(errm),
 	     "Bad msg (%s)", trm);
     
@@ -469,7 +466,7 @@ START_TEST(test_ch_teardown_two_teardowns_fork)
   Suite *s;
   SRunner *sr;
   unsigned int nr_of_failures;
-  char errm[1024] = {0};
+  char errmsg[1024] = {0};
 
   s = suite_create("Fixture Two teardowns");
   tc = tcase_create("Fixture Two teardowns");
@@ -488,18 +485,18 @@ START_TEST(test_ch_teardown_two_teardowns_fork)
 
     for (i = 0; i < nr_of_failures; i++) {
       char *trm = tr_str(tra[i]);
-      if (strlen(errm) + strlen(trm) > 1022) {
+      if (strlen(errmsg) + strlen(trm) > 1022) {
         free(trm);
         break;
       } 
-      strcat(errm, trm);
-      strcat(errm, "\n");
+      strcat(errmsg, trm);
+      strcat(errmsg, "\n");
       free(trm);
     }
     free(tra);
   }
   ck_assert_msg(nr_of_failures == 0, "Problem with several teardowns\n %s",
-              errm);
+              errmsg);
 
   srunner_free(sr);
 }
