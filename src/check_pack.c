@@ -156,14 +156,14 @@ static int upack_int (char **buf)
 
 static void pack_str (char **buf, const char *val)
 {
-  int strsz;
+  size_t strsz;
 
   if (val == NULL)
     strsz = 0;
   else
     strsz = strlen (val);
 
-  pack_int (buf, strsz);  
+  pack_int (buf, (int)strsz);
 
   if (strsz > 0) {
     memcpy (*buf, val, strsz);
@@ -174,9 +174,9 @@ static void pack_str (char **buf, const char *val)
 static char *upack_str (char **buf)
 {
   char *val;
-  int strsz;
+  size_t strsz;
 
-  strsz = upack_int (buf);
+  strsz = (size_t)upack_int (buf);
 
   if (strsz > 0) {
     val = emalloc (strsz + 1);
@@ -205,7 +205,7 @@ static enum ck_msg_type upack_type (char **buf)
 static int pack_ctx (char **buf, void *msg)
 {
   char *ptr;
-  int len;
+  size_t len;
   CtxMsg *cmsg = (CtxMsg *)msg;
 
   len = 4 + 4;
@@ -225,7 +225,7 @@ static void upack_ctx (char **buf, CtxMsg *cmsg)
 static int pack_duration (char **buf, void *msg)
 {
   char *ptr;
-  int len;
+  size_t len;
   DurationMsg *cmsg = (DurationMsg *)msg;
 
   len = 4 + 4;
@@ -245,7 +245,7 @@ static void upack_duration (char **buf, DurationMsg *cmsg)
 static int pack_loc (char **buf, void *msg)
 {
   char *ptr;
-  int len;
+  size_t len;
   LocMsg *lmsg = (LocMsg *)msg;
 
   len = 4 + 4 + (lmsg->file ? strlen (lmsg->file) : 0) + 4;
@@ -267,7 +267,7 @@ static void upack_loc (char **buf, LocMsg *lmsg)
 static int pack_fail (char **buf, void *msg)
 {
   char *ptr;
-  int len;
+  size_t len;
   FailMsg *fmsg = (FailMsg *)msg;
 
   len = 4 + 4 + (fmsg->msg ? strlen (fmsg->msg) : 0);
@@ -311,7 +311,7 @@ void ppack (int fdes, enum ck_msg_type type, void *msg)
 
   pthread_cleanup_push( ppack_cleanup, &ck_mutex_lock );
   pthread_mutex_lock(&ck_mutex_lock);
-  r = write (fdes, buf, n);
+  r = write (fdes, buf, (size_t)n);
   pthread_mutex_unlock(&ck_mutex_lock);
   pthread_cleanup_pop(0);
   if (r == -1)
@@ -431,7 +431,8 @@ static void rcvmsg_update_loc (RcvMsg *rmsg, const char *file, int line)
   
 RcvMsg *punpack (int fdes)
 {
-  int nread, nparse, n;
+  int nread, nparse;
+  size_t n;
   char *buf;
   RcvMsg *rmsg;
 
@@ -446,9 +447,11 @@ RcvMsg *punpack (int fdes)
   while (nparse > 0) {
     /* Parse one message */
     n = get_result (buf, rmsg);
-    nparse -= n;
+    nparse -= (int)n;
+    if(nparse < 0)
+      eprintf("attempted to move negative bytes:", __FILE__, __LINE__, nparse);
     /* Move remaining data in buffer to the beginning */
-    memmove(buf, buf + n, nparse);
+    memmove(buf, buf + n, (size_t)nparse);
     /* If EOF has not been seen */
     if (nread > 0) {
       /* Read more data into empty space at end of the buffer */
