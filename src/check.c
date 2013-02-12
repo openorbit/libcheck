@@ -158,7 +158,7 @@ void suite_add_tcase (Suite *s, TCase *tc)
   check_list_add_end (s->tclst, tc);
 }
 
-void _tcase_add_test (TCase *tc, TFun fn, const char *name, int _signal, int allowed_exit_value, int start, int end)
+void _tcase_add_test (TCase *tc, TFun fn, const char *name, int _signal, signed char allowed_exit_value, int start, int end)
 {
   TF * tf;
   if (tc == NULL || fn == NULL || name == NULL)

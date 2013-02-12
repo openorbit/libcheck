@@ -80,10 +80,10 @@ static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tf, int i);
 static TestResult *receive_result_info_fork (const char *tcname,
                                              const char *tname,
                                              int iter,
-					     int status, int expected_signal,
-					     unsigned char allowed_exit_value);
+                                             int status, int expected_signal,
+                                             signed char allowed_exit_value);
 static void set_fork_info (TestResult *tr, int status, int expected_signal,
-			   unsigned char allowed_exit_value);
+                          signed char allowed_exit_value);
 static char *signal_msg (int sig);
 static char *signal_error_msg (int signal_received, int signal_expected);
 static char *exit_msg (int exitstatus);
@@ -440,8 +440,8 @@ static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tfun, int i)
 static TestResult *receive_result_info_fork (const char *tcname,
                                              const char *tname,
                                              int iter,
-					     int status, int expected_signal, 
-                                             unsigned char allowed_exit_value)
+                                             int status, int expected_signal,
+                                             signed char allowed_exit_value)
 {
   TestResult *tr;
 
@@ -458,11 +458,11 @@ static TestResult *receive_result_info_fork (const char *tcname,
   return tr;
 }
 
-static void set_fork_info (TestResult *tr, int status, int signal_expected, unsigned char allowed_exit_value)
+static void set_fork_info (TestResult *tr, int status, int signal_expected, signed char allowed_exit_value)
 {
   int was_sig = WIFSIGNALED(status);
   int was_exit = WIFEXITED(status);
-  int exit_status = WEXITSTATUS(status);
+  signed char exit_status = (signed char)WEXITSTATUS(status);
   int signal_received = WTERMSIG(status);
 
   if (was_sig) {
