@@ -7,7 +7,7 @@
 
 int main (void)
 {
-  int n;
+  unsigned int n;
   SRunner *sr;
 
 #ifdef _POSIX_VERSION

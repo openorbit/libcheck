@@ -5,8 +5,8 @@
 #define TIMEOUT_TESTS_ENABLED 1
 #endif
 
-int sub_nfailed;
-int sub_ntests;
+unsigned int sub_nfailed;
+unsigned int sub_ntests;
 
 void fork_setup (void);
 void fork_teardown (void);
@@ -29,6 +29,6 @@ Suite *make_exit_suite(void);
 Suite *make_selective_suite(void);
 
 extern int master_tests_lineno[];
-void init_master_tests_lineno(int num_master_tests);
+void init_master_tests_lineno(unsigned int num_master_tests);
 
 #endif /* CHECK_CHECK_H */

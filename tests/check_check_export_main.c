@@ -7,7 +7,7 @@
 
 int main (void)
 {
-  int n;
+  unsigned int n;
   SRunner *sr;
 
   fork_setup();

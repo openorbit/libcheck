@@ -203,14 +203,14 @@ static master_test_t master_tests[] = {
   { "Core", CK_FAILURE, "We failed" }
 };
 
-static int nr_of_master_tests = sizeof master_tests /sizeof master_tests[0];
+static unsigned int nr_of_master_tests = sizeof master_tests /sizeof master_tests[0];
 
 int master_tests_lineno[sizeof master_tests /sizeof master_tests[0]];
 
 START_TEST(test_check_nfailures)
 {
-  int i;
-  int failed = 0;
+  unsigned int i;
+  unsigned int failed = 0;
   
   for (i = 0; i < nr_of_master_tests; i++) {
     if (master_tests[i].failure_type != CK_PASS) {
@@ -232,8 +232,8 @@ END_TEST
 
 START_TEST(test_check_failure_msgs)
 {
-  int i;
-  int passed = 0;
+  unsigned int i;
+  unsigned int passed = 0;
   const char *got_msg;
   const char *expected_msg;
   TestResult *tr;
@@ -262,9 +262,9 @@ END_TEST
   
 START_TEST(test_check_failure_lnos)
 {
-  int i;
+  unsigned int i;
   int line_no;
-  int passed = 0;
+  unsigned int passed = 0;
   TestResult *tr;
   
   for (i = 0; i < sub_ntests; i++) {
@@ -290,8 +290,8 @@ END_TEST
 
 START_TEST(test_check_failure_ftypes)
 {
-  int i;
-  int passed = 0;
+  unsigned int i;
+  unsigned int passed = 0;
   TestResult *tr;
   
   for (i = 0; i < sub_ntests; i++) {
@@ -311,7 +311,7 @@ END_TEST
 
 START_TEST(test_check_failure_lfiles)
 {
-  int i;
+  unsigned int i;
   for (i = 0; i < sub_nfailed; i++) {
     TestResult *tr = tr_fail_array[i];
     ck_assert_msg(tr != NULL, NULL);
@@ -402,9 +402,9 @@ Suite *make_master_suite (void)
   tcase_add_test (tc_core, test_check_failure_ftypes);
   tcase_add_test (tc_core, test_check_failure_lnos);
   tcase_add_test (tc_core, test_check_failure_lfiles);
-  tcase_add_loop_test (tc_core, test_check_tcnames, 0, sub_ntests);
-  tcase_add_loop_test (tc_core, test_check_all_msgs, 0, sub_ntests);
-  tcase_add_loop_test (tc_core, test_check_all_ftypes, 0, nr_of_master_tests);
+  tcase_add_loop_test (tc_core, test_check_tcnames, 0, (int)sub_ntests);
+  tcase_add_loop_test (tc_core, test_check_all_msgs, 0, (int)sub_ntests);
+  tcase_add_loop_test (tc_core, test_check_all_ftypes, 0, (int)nr_of_master_tests);
   tcase_add_unchecked_fixture(tc_fixture, test_fixture_setup,
 			      test_fixture_teardown);
   /* add the test 3 times to make sure we adequately test

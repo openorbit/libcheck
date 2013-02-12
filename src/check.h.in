@@ -422,10 +422,10 @@ void CK_EXPORT srunner_run (SRunner *sr, const char *sname, const char *tcname, 
    completely run, of course */
 
 /* Number of failed tests in a run suite. Includes failures + errors */
-int CK_EXPORT srunner_ntests_failed (SRunner *sr);
+unsigned int CK_EXPORT srunner_ntests_failed (SRunner *sr);
 
 /* Total number of tests run in a run suite */
-int CK_EXPORT srunner_ntests_run (SRunner *sr);
+unsigned int CK_EXPORT srunner_ntests_run (SRunner *sr);
 
 /* Return an array of results for all failures
   

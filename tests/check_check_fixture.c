@@ -38,7 +38,7 @@ void teardown_fixture (void)
 
 START_TEST(test_fixture_fail_counts)
 {
-  int nrun, nfail;
+  unsigned int nrun, nfail;
 
   nrun = srunner_ntests_run(fixture_sr);
   nfail = srunner_ntests_failed(fixture_sr);
@@ -465,7 +465,7 @@ START_TEST(test_ch_teardown_two_teardowns_fork)
   TCase *tc;
   Suite *s;
   SRunner *sr;
-  int nr_of_failures;
+  unsigned int nr_of_failures;
   char errm[1024] = {0};
 
   s = suite_create("Fixture Two teardowns");
@@ -481,7 +481,7 @@ START_TEST(test_ch_teardown_two_teardowns_fork)
   nr_of_failures = srunner_ntests_failed(sr);
   if (nr_of_failures > 0) {
     TestResult **tra = srunner_failures(sr);
-    int i;
+    unsigned int i;
 
     for (i = 0; i < nr_of_failures; i++) {
       char *trm = tr_str(tra[i]);

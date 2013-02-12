@@ -664,7 +664,7 @@ Suite *make_sub2_suite(void)
   return s;
 }
 
-void init_master_tests_lineno(int num_master_tests) {
+void init_master_tests_lineno(unsigned int num_master_tests) {
   const char * lineno[] = {
 /* Simple Tests */
     LINENO_lno,
@@ -848,8 +848,8 @@ void init_master_tests_lineno(int num_master_tests) {
     "-1",
     "-1"
   };
-  int s = sizeof lineno /sizeof lineno[0];
-  int i;
+  unsigned int s = sizeof lineno /sizeof lineno[0];
+  unsigned int i;
   
   if(s != num_master_tests)
   {

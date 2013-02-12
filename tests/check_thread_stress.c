@@ -56,7 +56,7 @@ END_TEST
 int
 main (void)
 {
-  int nf;
+  unsigned int nf;
   s = suite_create ("ForkThreadStress");
   tc = tcase_create ("ForkThreadStress");
   sr = srunner_create (s);

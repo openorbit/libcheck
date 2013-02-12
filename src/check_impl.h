@@ -62,9 +62,9 @@ struct TCase {
 };
 
 typedef struct TestStats {
-  int n_checked;
-  int n_failed;
-  int n_errors;
+  unsigned int n_checked;
+  unsigned int n_failed;
+  unsigned int n_errors;
 } TestStats;
 
 struct TestResult {

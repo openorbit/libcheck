@@ -317,12 +317,12 @@ void srunner_free (SRunner *sr)
   free (sr);
 }
 
-int srunner_ntests_failed (SRunner *sr)
+unsigned int srunner_ntests_failed (SRunner *sr)
 {
   return sr->stats->n_failed + sr->stats->n_errors;
 }
 
-int srunner_ntests_run (SRunner *sr)
+unsigned int srunner_ntests_run (SRunner *sr)
 {
   return sr->stats->n_checked;
 }
