@@ -20,10 +20,11 @@ START_TEST(test_pack_fmsg)
 
   fmsg = emalloc (sizeof (FailMsg));
 
-  fmsg->msg = (char *) "Hello, world!";
+  fmsg->msg = strdup("Hello, world!");
   pack (CK_MSG_FAIL, &buf, (CheckMsg *) fmsg);
+  free(fmsg->msg);
 
-  fmsg->msg = (char *) "";
+  fmsg->msg = NULL;
   upack (buf, (CheckMsg *) fmsg, &type);
 
   ck_assert_msg (type == CK_MSG_FAIL,
@@ -49,10 +50,12 @@ START_TEST(test_pack_loc)
   enum ck_msg_type type;
 
   lmsg = emalloc (sizeof (LocMsg));
-  lmsg->file = (char *) "abc123.c";
+  lmsg->file = strdup("abc123.c");
   lmsg->line = 125;
 
   pack (CK_MSG_LOC, &buf, (CheckMsg *) lmsg);
+  free(lmsg->file);
+
   lmsg->file = NULL;
   lmsg->line = 0;
   upack (buf, (CheckMsg *) lmsg, &type);
@@ -150,9 +153,10 @@ START_TEST(test_pack_fail_limit)
   char *buf;
   enum ck_msg_type type;
 
-  fmsg.msg = (char *) "";
+  fmsg.msg = strdup("");
   pack (CK_MSG_FAIL, &buf, (void *) &fmsg);
-  fmsg.msg = (char *) "abc";
+  free(fmsg.msg);
+  fmsg.msg = NULL;
   upack (buf, (void *) &fmsg, &type);
   free (buf);
   ck_assert_msg (strcmp (fmsg.msg, "") == 0, 
@@ -173,10 +177,12 @@ START_TEST(test_pack_loc_limit)
   char *buf;
   enum ck_msg_type type;
 
-  lmsg.file = (char *) "";
+  lmsg.file = strdup("");
   lmsg.line = 0;
   pack (CK_MSG_LOC, &buf, (void *) &lmsg);
-  lmsg.file = (char *) "abc";
+  free(lmsg.file);
+
+  lmsg.file = NULL;
   upack (buf, (void *) &lmsg, &type);
   ck_assert_msg (strcmp (lmsg.file, "") == 0,
 	       "Empty string not handled properly");
@@ -200,9 +206,9 @@ START_TEST(test_ppack)
   int pipe_result;
   
   cmsg.ctx = CK_CTX_TEST;
-  lmsg.file = (char *) "abc123.c";
+  lmsg.file = strdup("abc123.c");
   lmsg.line = 10;
-  fmsg.msg = (char *) "oops";
+  fmsg.msg = strdup("oops");
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
   ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
@@ -226,6 +232,8 @@ START_TEST(test_ppack)
   ck_assert_msg (strcmp(rmsg->msg, "oops") == 0,
 	       "Failure message not received correctly");
 
+  free(lmsg.file);
+  free(fmsg.msg);
   free(rmsg);
 }
 END_TEST
@@ -238,9 +246,9 @@ START_TEST(test_ppack_noctx)
   RcvMsg *rmsg;
   int pipe_result;
   
-  lmsg.file = (char *) "abc123.c";
+  lmsg.file = strdup("abc123.c");
   lmsg.line = 10;
-  fmsg.msg = (char *) "oops";
+  fmsg.msg = strdup("oops");
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
   ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
@@ -251,6 +259,8 @@ START_TEST(test_ppack_noctx)
   ck_assert_msg (rmsg == NULL,
 	       "Result should be NULL with no CTX");
 
+  free(lmsg.file);
+  free(fmsg.msg);
   if (rmsg != NULL)
     free (rmsg);
 }
@@ -292,7 +302,7 @@ START_TEST(test_ppack_multictx)
   
   cmsg.ctx = CK_CTX_SETUP;
   lmsg.line = 5;
-  lmsg.file = (char *) "abc123.c";
+  lmsg.file = strdup("abc123.c");
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
   ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
@@ -311,6 +321,7 @@ START_TEST(test_ppack_multictx)
   ck_assert_msg (rmsg->fixture_line == -1,
 	       "Fixture not reset on CTX change");
 
+  free(lmsg.file);
   free (rmsg);
 }
 END_TEST
@@ -323,7 +334,7 @@ START_TEST(test_ppack_nofail)
   RcvMsg *rmsg;
   int pipe_result;
 
-  lmsg.file = (char *) "abc123.c";
+  lmsg.file = strdup("abc123.c");
   lmsg.line = 10;
   cmsg.ctx = CK_CTX_SETUP;
   pipe_result = pipe (filedes);
@@ -336,6 +347,7 @@ START_TEST(test_ppack_nofail)
   ck_assert_msg (rmsg != NULL && rmsg->msg == NULL,
 	       "Failure result should be NULL with no failure message");
   
+  free(lmsg.file);
   free (rmsg);
 }
 END_TEST
