@@ -75,8 +75,8 @@ static void  check_type (int type, const char *file, int line);
 static enum ck_msg_type upack_type (char **buf);
 static void  pack_type  (char **buf, enum ck_msg_type type);
 
-static int   read_buf   (int fdes, int size, char *buf);
-static int   get_result (char *buf, RcvMsg *rmsg);
+static int   read_buf   (int fdes, size_t size, char *buf);
+static size_t   get_result (char *buf, RcvMsg *rmsg);
 static void  rcvmsg_update_ctx (RcvMsg *rmsg, enum ck_result_ctx ctx);
 static void  rcvmsg_update_loc (RcvMsg *rmsg, const char *file, int line);
 static RcvMsg *rcvmsg_create (void);
@@ -320,7 +320,7 @@ void ppack (int fdes, enum ck_msg_type type, void *msg)
   free (buf);
 }
 
-static int read_buf (int fdes, int size, char *buf)
+static int read_buf (int fdes, size_t size, char *buf)
 {
   int n;
 
@@ -331,14 +331,14 @@ static int read_buf (int fdes, int size, char *buf)
   return n;
 }    
 
-static int get_result (char *buf, RcvMsg *rmsg)
+static size_t get_result (char *buf, RcvMsg *rmsg)
 {
   enum ck_msg_type type;
   CheckMsg msg;
   int n;
 
   n = upack (buf, &msg, &type);
-  if (n == -1)
+  if (n < 0)
     eprintf ("Error in call to upack", __FILE__, __LINE__ - 2);
   
   if (type == CK_MSG_CTX) {
@@ -369,7 +369,7 @@ static int get_result (char *buf, RcvMsg *rmsg)
   } else
     check_type (type, __FILE__, __LINE__);
 
-  return n;
+  return (size_t)n;
 }
 
 static void reset_rcv_test (RcvMsg *rmsg)
