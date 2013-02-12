@@ -254,12 +254,12 @@ void xml_lfun (SRunner *sr CK_ATTRIBUTE_UNUSED, FILE *file, enum print_output pr
   case CLENDLOG_SR:
     {
       struct timespec ts_end;
-      unsigned int duration;
+      unsigned long duration;
 
       /* calculate time the test were running */
       clock_gettime(CLOCK_MONOTONIC, &ts_end);
-      duration = DIFF_IN_USEC(ts_start, ts_end);
-      fprintf(file, "  <duration>%u.%06u</duration>\n",
+      duration = (unsigned long)DIFF_IN_USEC(ts_start, ts_end);
+      fprintf(file, "  <duration>%lu.%06lu</duration>\n",
           duration / 1000000, duration % 1000000);
       fprintf(file, "</testsuites>\n");
     }
