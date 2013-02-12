@@ -73,10 +73,10 @@ typedef struct RcvMsg
 void rcvmsg_free (RcvMsg *rmsg);
 
   
-int pack (enum ck_msg_type type, char **buf, CheckMsg *msg);
+int pack (enum ck_msg_type type, char **buf, void *msg);
 int upack (char *buf, CheckMsg *msg, enum ck_msg_type *type);
 
-void ppack (int fdes, enum ck_msg_type type, CheckMsg *msg);
+void ppack (int fdes, enum ck_msg_type type, void *msg);
 RcvMsg *punpack (int fdes);
 
 #ifdef HAVE_PTHREAD

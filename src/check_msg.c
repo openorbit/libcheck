@@ -82,7 +82,7 @@ void send_failure_info(const char *msg)
   FailMsg fmsg;
 
   fmsg.msg = (char *) msg;
-  ppack(fileno(get_pipe()), CK_MSG_FAIL, (CheckMsg *) &fmsg);
+  ppack(fileno(get_pipe()), CK_MSG_FAIL, &fmsg);
 }
 
 void send_duration_info(int duration)
@@ -90,7 +90,7 @@ void send_duration_info(int duration)
   DurationMsg dmsg;
 
   dmsg.duration = duration;
-  ppack(fileno(get_pipe()), CK_MSG_DURATION, (CheckMsg *) &dmsg);
+  ppack(fileno(get_pipe()), CK_MSG_DURATION, &dmsg);
 }
 
 void send_loc_info(const char * file, int line)
@@ -99,7 +99,7 @@ void send_loc_info(const char * file, int line)
 
   lmsg.file = (char *) file;
   lmsg.line = line;
-  ppack(fileno(get_pipe()), CK_MSG_LOC, (CheckMsg *) &lmsg);
+  ppack(fileno(get_pipe()), CK_MSG_LOC, &lmsg);
 }
 
 void send_ctx_info(enum ck_result_ctx ctx)
@@ -107,7 +107,7 @@ void send_ctx_info(enum ck_result_ctx ctx)
   CtxMsg cmsg;
 
   cmsg.ctx = ctx;
-  ppack(fileno(get_pipe()), CK_MSG_CTX, (CheckMsg *) &cmsg);
+  ppack(fileno(get_pipe()), CK_MSG_CTX, &cmsg);
 }
 
 TestResult *receive_test_result (int waserror)

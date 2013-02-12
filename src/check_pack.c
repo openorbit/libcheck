@@ -62,10 +62,10 @@ static int   upack_int  (char **buf);
 static void  pack_str   (char **buf, const char *str);
 static char *upack_str  (char **buf);
 
-static int   pack_ctx   (char **buf, CtxMsg  *cmsg);
-static int   pack_loc   (char **buf, LocMsg  *lmsg);
-static int   pack_fail  (char **buf, FailMsg *fmsg);
-static int   pack_duration  (char **buf, DurationMsg *fmsg);
+static int   pack_ctx   (char **buf, void  *cmsg);
+static int   pack_loc   (char **buf, void  *lmsg);
+static int   pack_fail  (char **buf, void *fmsg);
+static int   pack_duration  (char **buf, void *fmsg);
 static void  upack_ctx  (char **buf, CtxMsg  *cmsg);
 static void  upack_loc  (char **buf, LocMsg  *lmsg);
 static void  upack_fail (char **buf, FailMsg *fmsg);
@@ -82,7 +82,7 @@ static void  rcvmsg_update_loc (RcvMsg *rmsg, const char *file, int line);
 static RcvMsg *rcvmsg_create (void);
 void rcvmsg_free (RcvMsg *rmsg);
 
-typedef int  (*pfun)  (char **, CheckMsg *);
+typedef int  (*pfun)  (char **, void *);
 typedef void (*upfun) (char **, CheckMsg *);
 
 static pfun pftab [] = {
@@ -99,7 +99,7 @@ static upfun upftab [] = {
   (upfun) upack_duration
 };
 
-int pack (enum ck_msg_type type, char **buf, CheckMsg *msg)
+int pack (enum ck_msg_type type, char **buf, void *msg)
 {
   if (buf == NULL)
     return -1;
@@ -202,10 +202,11 @@ static enum ck_msg_type upack_type (char **buf)
 }
 
   
-static int pack_ctx (char **buf, CtxMsg *cmsg)
+static int pack_ctx (char **buf, void *msg)
 {
   char *ptr;
   int len;
+  CtxMsg *cmsg = (CtxMsg *)msg;
 
   len = 4 + 4;
   *buf = ptr = emalloc (len);
@@ -221,10 +222,11 @@ static void upack_ctx (char **buf, CtxMsg *cmsg)
   cmsg->ctx = upack_int (buf);
 }
 
-static int pack_duration (char **buf, DurationMsg *cmsg)
+static int pack_duration (char **buf, void *msg)
 {
   char *ptr;
   int len;
+  DurationMsg *cmsg = (DurationMsg *)msg;
 
   len = 4 + 4;
   *buf = ptr = emalloc (len);
@@ -240,10 +242,11 @@ static void upack_duration (char **buf, DurationMsg *cmsg)
   cmsg->duration = upack_int (buf);
 }
 
-static int pack_loc (char **buf, LocMsg *lmsg)
+static int pack_loc (char **buf, void *msg)
 {
   char *ptr;
   int len;
+  LocMsg *lmsg = (LocMsg *)msg;
 
   len = 4 + 4 + (lmsg->file ? strlen (lmsg->file) : 0) + 4;
   *buf = ptr = emalloc (len);
@@ -261,10 +264,11 @@ static void upack_loc (char **buf, LocMsg *lmsg)
   lmsg->line = upack_int (buf);
 }
 
-static int pack_fail (char **buf, FailMsg *fmsg)
+static int pack_fail (char **buf, void *msg)
 {
   char *ptr;
   int len;
+  FailMsg *fmsg = (FailMsg *)msg;
 
   len = 4 + 4 + (fmsg->msg ? strlen (fmsg->msg) : 0);
   *buf = ptr = emalloc (len);
@@ -294,7 +298,7 @@ void ppack_cleanup( void *mutex )
 }
 #endif
 
-void ppack (int fdes, enum ck_msg_type type, CheckMsg *msg)
+void ppack (int fdes, enum ck_msg_type type, void *msg)
 {
   char *buf;
   int n;

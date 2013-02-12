@@ -87,10 +87,10 @@ START_TEST(test_pack_ctx)
   enum ck_msg_type type;
 
   cmsg.ctx = CK_CTX_SETUP;
-  pack (CK_MSG_CTX, &buf, (CheckMsg *) &cmsg);
+  pack (CK_MSG_CTX, &buf, (void *) &cmsg);
 
   cmsg.ctx = CK_CTX_TEARDOWN;
-  upack (buf, (CheckMsg *) &cmsg, &type);
+  upack (buf, (void *) &cmsg, &type);
 
   ck_assert_msg (type == CK_MSG_CTX,
 	       "Bad type unpacked for CtxMsg");
@@ -115,13 +115,13 @@ START_TEST(test_pack_len)
   enum ck_msg_type type;
 
   cmsg.ctx = CK_CTX_TEST;
-  n = pack (CK_MSG_CTX, &buf, (CheckMsg *) &cmsg);
+  n = pack (CK_MSG_CTX, &buf, (void *) &cmsg);
   ck_assert_msg (n > 0, "Return val from pack not set correctly");
 
   /* Value below may change with different implementations of pack */
   ck_assert_msg (n == 8, "Return val from pack not correct");
   n = 0;
-  n = upack (buf, (CheckMsg *) &cmsg, &type);
+  n = upack (buf, (void *) &cmsg, &type);
   if (n != 8) {
     snprintf (errm, sizeof (errm), "%d bytes read from upack, should be 8", n);
     fail (errm);
@@ -138,8 +138,8 @@ START_TEST(test_pack_ctx_limit)
   char *buf;
 
   cmsg.ctx = -1;
-  pack (CK_MSG_CTX, &buf, (CheckMsg *) &cmsg);
-  pack (CK_MSG_CTX, &buf, (CheckMsg *) cmsgp);
+  pack (CK_MSG_CTX, &buf, (void *) &cmsg);
+  pack (CK_MSG_CTX, &buf, (void *) cmsgp);
 }
 END_TEST
 
@@ -151,9 +151,9 @@ START_TEST(test_pack_fail_limit)
   enum ck_msg_type type;
 
   fmsg.msg = (char *) "";
-  pack (CK_MSG_FAIL, &buf, (CheckMsg *) &fmsg);
+  pack (CK_MSG_FAIL, &buf, (void *) &fmsg);
   fmsg.msg = (char *) "abc";
-  upack (buf, (CheckMsg *) &fmsg, &type);
+  upack (buf, (void *) &fmsg, &type);
   free (buf);
   ck_assert_msg (strcmp (fmsg.msg, "") == 0, 
                "Empty string not handled properly");
@@ -161,8 +161,8 @@ START_TEST(test_pack_fail_limit)
   free (fmsg.msg);
   fmsg.msg = NULL;
 
-  pack (CK_MSG_FAIL, &buf, (CheckMsg *) &fmsg);
-  pack (CK_MSG_FAIL, &buf, (CheckMsg *) fmsgp);
+  pack (CK_MSG_FAIL, &buf, (void *) &fmsg);
+  pack (CK_MSG_FAIL, &buf, (void *) fmsgp);
 }
 END_TEST
 
@@ -175,16 +175,16 @@ START_TEST(test_pack_loc_limit)
 
   lmsg.file = (char *) "";
   lmsg.line = 0;
-  pack (CK_MSG_LOC, &buf, (CheckMsg *) &lmsg);
+  pack (CK_MSG_LOC, &buf, (void *) &lmsg);
   lmsg.file = (char *) "abc";
-  upack (buf, (CheckMsg *) &lmsg, &type);
+  upack (buf, (void *) &lmsg, &type);
   ck_assert_msg (strcmp (lmsg.file, "") == 0,
 	       "Empty string not handled properly");
   free (lmsg.file);
   lmsg.file = NULL;
 
-  pack (CK_MSG_LOC, &buf, (CheckMsg *) &lmsg);
-  pack (CK_MSG_LOC, &buf, (CheckMsg *) lmsgp);
+  pack (CK_MSG_LOC, &buf, (void *) &lmsg);
+  pack (CK_MSG_LOC, &buf, (void *) lmsgp);
 }
 END_TEST
 
@@ -205,9 +205,9 @@ START_TEST(test_ppack)
   fmsg.msg = (char *) "oops";
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
-  ppack (filedes[1], CK_MSG_FAIL, (CheckMsg *) &fmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
+  ppack (filedes[1], CK_MSG_FAIL, (void *) &fmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 
@@ -243,8 +243,8 @@ START_TEST(test_ppack_noctx)
   fmsg.msg = (char *) "oops";
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
-  ppack (filedes[1], CK_MSG_FAIL, (CheckMsg *) &fmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
+  ppack (filedes[1], CK_MSG_FAIL, (void *) &fmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 
@@ -266,7 +266,7 @@ START_TEST(test_ppack_onlyctx)
   cmsg.ctx = CK_CTX_SETUP;
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 
@@ -295,13 +295,13 @@ START_TEST(test_ppack_multictx)
   lmsg.file = (char *) "abc123.c";
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
   cmsg.ctx = CK_CTX_TEST;
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
   cmsg.ctx = CK_CTX_TEARDOWN;
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 
@@ -328,8 +328,8 @@ START_TEST(test_ppack_nofail)
   cmsg.ctx = CK_CTX_SETUP;
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 
@@ -361,9 +361,9 @@ START_TEST(test_ppack_big)
   fmsg.msg[BIG_MSG_LEN - 1] = '\0';
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
-  ppack (filedes[1], CK_MSG_CTX, (CheckMsg *) &cmsg);
-  ppack (filedes[1], CK_MSG_LOC, (CheckMsg *) &lmsg);
-  ppack (filedes[1], CK_MSG_FAIL, (CheckMsg *) &fmsg);
+  ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
+  ppack (filedes[1], CK_MSG_LOC, (void *) &lmsg);
+  ppack (filedes[1], CK_MSG_FAIL, (void *) &fmsg);
   close (filedes[1]);
   rmsg = punpack (filedes[0]);
 

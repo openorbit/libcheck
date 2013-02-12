@@ -115,6 +115,7 @@ AX_CFLAGS_ADD([-Wstrict-prototypes])
 AX_CFLAGS_ADD([-Wmissing-prototypes])
 AX_CFLAGS_ADD([-Wwrite-strings])
 AX_CFLAGS_ADD([-Wno-variadic-macros])
+AX_CFLAGS_ADD([-Wstrict-aliasing=3])
 
 AC_CHECK_PROGS(GCOV, gcov, false)
 AC_CHECK_PROGS(LCOV, lcov, false)
