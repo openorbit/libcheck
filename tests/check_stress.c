@@ -25,9 +25,9 @@ START_TEST(test_fail)
 END_TEST
 
 
-static void run (int num_iters)
+static void run (unsigned int num_iters)
 {
-  int i;
+  unsigned int i;
   s = suite_create ("Stress");
   tc = tcase_create ("Stress");
   sr = srunner_create (s);
@@ -51,11 +51,11 @@ static void run (int num_iters)
   
 int main(void)
 {
-  int i;
+  unsigned int i;
   time_t t1;
-  int iters[] = {1, 100, 1000, 2000, 4000, 8000, 10000, 20000, 40000, -1};
+  unsigned int iters[] = {1, 100, 1000, 2000, 4000, 8000, 10000, 20000, 40000};
 
-  for (i = 0; iters[i] != -1; i++) {
+  for (i = 0; i < sizeof(iters)/sizeof(unsigned int); i++) {
     t1 = time(NULL);
     run(iters[i]);
     printf ("%d, %d\n", iters[i], (int) difftime(time(NULL), t1));
