@@ -62,10 +62,10 @@ static int   upack_int  (char **buf);
 static void  pack_str   (char **buf, const char *str);
 static char *upack_str  (char **buf);
 
-static int   pack_ctx   (char **buf, void  *cmsg);
-static int   pack_loc   (char **buf, void  *lmsg);
-static int   pack_fail  (char **buf, void *fmsg);
-static int   pack_duration  (char **buf, void *fmsg);
+static size_t pack_ctx   (char **buf, void  *cmsg);
+static size_t pack_loc   (char **buf, void  *lmsg);
+static size_t pack_fail  (char **buf, void *fmsg);
+static size_t pack_duration  (char **buf, void *fmsg);
 static void  upack_ctx  (char **buf, CtxMsg  *cmsg);
 static void  upack_loc  (char **buf, LocMsg  *lmsg);
 static void  upack_fail (char **buf, FailMsg *fmsg);
@@ -82,7 +82,7 @@ static void  rcvmsg_update_loc (RcvMsg *rmsg, const char *file, int line);
 static RcvMsg *rcvmsg_create (void);
 void rcvmsg_free (RcvMsg *rmsg);
 
-typedef int  (*pfun)  (char **, void *);
+typedef size_t  (*pfun)  (char **, void *);
 typedef void (*upfun) (char **, CheckMsg *);
 
 static pfun pftab [] = {
@@ -108,7 +108,7 @@ int pack (enum ck_msg_type type, char **buf, void *msg)
 
   check_type (type, __FILE__, __LINE__);
 
-  return pftab[type] (buf, msg);
+  return (int)pftab[type] (buf, msg);
 }
 
 int upack (char *buf, CheckMsg *msg, enum ck_msg_type *type)
@@ -202,7 +202,7 @@ static enum ck_msg_type upack_type (char **buf)
 }
 
   
-static int pack_ctx (char **buf, void *msg)
+static size_t pack_ctx (char **buf, void *msg)
 {
   char *ptr;
   size_t len;
@@ -222,7 +222,7 @@ static void upack_ctx (char **buf, CtxMsg *cmsg)
   cmsg->ctx = upack_int (buf);
 }
 
-static int pack_duration (char **buf, void *msg)
+static size_t pack_duration (char **buf, void *msg)
 {
   char *ptr;
   size_t len;
@@ -242,7 +242,7 @@ static void upack_duration (char **buf, DurationMsg *cmsg)
   cmsg->duration = upack_int (buf);
 }
 
-static int pack_loc (char **buf, void *msg)
+static size_t pack_loc (char **buf, void *msg)
 {
   char *ptr;
   size_t len;
@@ -264,7 +264,7 @@ static void upack_loc (char **buf, LocMsg *lmsg)
   lmsg->line = upack_int (buf);
 }
 
-static int pack_fail (char **buf, void *msg)
+static size_t pack_fail (char **buf, void *msg)
 {
   char *ptr;
   size_t len;
