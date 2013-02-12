@@ -362,15 +362,13 @@ START_TEST(test_ppack_big)
   FailMsg fmsg;
   RcvMsg *rmsg;
   int pipe_result;
+  char bigfile[BIG_MSG_LEN] = {0};
+  memset(bigfile, 'a', BIG_MSG_LEN - 1);
 
   cmsg.ctx = CK_CTX_TEST;
-  lmsg.file = emalloc (BIG_MSG_LEN);
-  memset (lmsg.file,'a',BIG_MSG_LEN - 1);
-  lmsg.file[BIG_MSG_LEN - 1] = '\0';
+  lmsg.file = bigfile;
   lmsg.line = 10;
-  fmsg.msg = emalloc (BIG_MSG_LEN);
-  memset (fmsg.msg, 'a', BIG_MSG_LEN - 1);
-  fmsg.msg[BIG_MSG_LEN - 1] = '\0';
+  fmsg.msg = bigfile;
   pipe_result = pipe (filedes);
   ck_assert_msg (pipe_result == 0, "Failed to create pipe");
   ppack (filedes[1], CK_MSG_CTX, (void *) &cmsg);
@@ -391,8 +389,6 @@ START_TEST(test_ppack_big)
 	       "Failure message not received correctly");
   
   free (rmsg);
-  free (lmsg.file);
-  free (fmsg.msg);
 }
 END_TEST
 #endif /* _POSIX_VERSION */
